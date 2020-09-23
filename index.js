@@ -49,6 +49,6 @@ const server = new ApolloServer({
 
 // The `listen` method launches a web server.
 server.listen().then(({ url }) => {
-  console.log(`🚀  Server ready at ${url}`);
+  console.log(`🚀  Server running at ${url}\n📭  Run queries at https://studio-staging.apollographql.com/dev`);
 });
 
