@@ -1,0 +1,8 @@
+{
+  "name": "simple-server",
+  "version": "1.0.0",
+  "dependencies": {
+    "apollo-server": "^2.18.0",
+    "graphql": "^15.3.0"
+  }
+}
