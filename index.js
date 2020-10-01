@@ -6,6 +6,7 @@ const typeDefs = gql`
     title: String
     author: String
     description: String
+    hello: String
   }
 
   type Query {
@@ -39,6 +40,6 @@ const server = new ApolloServer({
 
 server.listen().then(({ url }) => {
   console.log(`🚀  Server is running!
-📭  Query at https://studio-staging.apollographql.com/dev
+📭  Query at https://studio.apollographql.com/dev
 🔉  Listening at ${url}`);
 });
