@@ -1,0 +1,203 @@
+enum Party {
+  """
+  Democratic Party: https://en.wikipedia.org/wiki/Democratic_Party_(United_States)
+  """
+  D
+  """
+  Republican Party: https://en.wikipedia.org/wiki/Republican_Party_(United_States)
+  """
+  R
+}
+
+"""
+The chambers of the [United States Congress](https://en.wikipedia.org/wiki/United_States_Congress).
+"""
+enum Chamber {
+  HOUSE
+  SENATE
+}
+
+"""
+Interface to abstract the shared data returned from the congress members list
+and the individual members detail endpoint.
+"""
+interface Member {
+  id: ID
+  firstName: String
+  middleName: String
+  lastName: String
+  suffix: String
+  dateOfBirth: String
+  gender: String
+  twitterAccount: String
+  facebookAccount: String
+  youtubeAccount: String
+  votesmartId: ID
+  inOffice: Boolean
+  lastUpdated: String
+  url: String
+  rssUrl: String
+  icpsrId: ID
+  crpId: ID
+  googleEntityId: ID
+  cspanId: ID
+  govtrackId: ID
+}
+
+"""
+Metadata for each member of the United States Congress, provided by ProPublica.
+Fetched through https://api.propublica.org/congress/v1/members/${MEMBER_ID}.json
+"""
+type MemberDetails implements Member {
+  # copied from Member Interface
+  id: ID
+  firstName: String
+  middleName: String
+  lastName: String
+  suffix: String
+  dateOfBirth: String
+  gender: String
+  twitterAccount: String
+  facebookAccount: String
+  youtubeAccount: String
+  votesmartId: ID
+  inOffice: Boolean
+  lastUpdated: String
+  url: String
+  rssUrl: String
+  icpsrId: ID
+  crpId: ID
+  googleEntityId: ID
+  cspanId: ID
+  govtrackId: ID
+
+  # fields only available by requesting data from individual member endpoint
+  roles: [MemberDetailsRole]
+  mostRecentVote: String
+  currentParty: Party
+  timesTopicsUrl: String
+  timesTag: String
+}
+
+"""
+Details for each role a member in congress might have, fetched through the member
+details endpoint: https://api.propublica.org/congress/v1/members/${MEMBER_ID}.json
+"""
+type MemberDetailsRole {
+  congress: String
+  chamber: String
+  title: String
+  shortTitle: String
+  state: String
+  party: Party
+  leadershipRole: String
+  fecCandidateId: ID
+  seniority: String
+  senateClass: String
+  stateRank: String
+  lisId: ID
+  ocdId: ID
+  startDate: String
+  endDate: String
+  office: String
+  phone: String
+  fax: String
+  contactForm: String
+  cookPvi: String
+  dwNominate: String
+  idealPoint: Float
+  nextElection: String
+  totalVotes: Int
+  missedVotes: Int
+  totalPresent: Int
+  billsSponsored: Int
+  billsCosponsored: Int
+  missedVotesPct: Float
+  votesWithPartyPct: Float
+  votesAgainstPartyPct: Float
+  # committees: [ [Object], [Object], [Object], [Object], [Object] ],
+  # subcommittees: []
+}
+
+"""
+Metadata for each member of the United States Congress, as it pertains to each session of congress.
+Fetched through https://api.propublica.org/congress/v1/{congress}/{chamber}/members.json.
+"""
+type CongressMember implements Member {
+  # copied from Member Interface
+  id: ID
+  firstName: String
+  middleName: String
+  lastName: String
+  suffix: String
+  dateOfBirth: String
+  gender: String
+  twitterAccount: String
+  facebookAccount: String
+  youtubeAccount: String
+  votesmartId: ID
+  inOffice: Boolean
+  lastUpdated: String
+  url: String
+  rssUrl: String
+  icpsrId: ID
+  crpId: ID
+  googleEntityId: ID
+  cspanId: ID
+  govtrackId: ID
+
+  # fields extended by CongressMember
+  title: String
+  shortTitle: String
+  apiUri: String
+  party: Party
+  leadershipRole: String
+  fecCandidateId: ID
+  contactForm: String
+  dwNominate: Float
+  seniority: String
+  nextElection: String
+  totalVotes: Int
+  missedVotes: Int
+  totalPresent: Int
+  ocdId: ID
+  office: String
+  phone: String
+  fax: String
+  state: String
+  senateClass: String
+  stateRank: String
+  lisId: ID
+  missedVotesPct: Float
+  votesWithPartyPct: Float
+  votesAgainstPartyPct: Float
+  cookPvi: String
+  idealPoint: Float
+}
+
+type Congress {
+  congress: String
+  chamber: String
+  numResults: Int
+  offset: Int
+  members: [CongressMember]
+}
+
+"""
+A GraphQL interface for congressional data exposed by ProPublica: https://projects.propublica.org/api-docs/congress-api/.
+Congressional data is updated daily.
+Fetch an API Key from them for free: https://www.propublica.org/datastore/api/propublica-congress-api
+"""
+type Query {
+  congress(
+    """
+    Specifies which session of Congress, e.g. 116
+    """
+    congress: Int!
+    """
+    Specifies which chamber of Congress, HOUSE or SENATE
+    """
+    chamber: Chamber!
+  ): [Congress]
+  memberById(id: ID!): MemberDetails
+}

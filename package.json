@@ -2,11 +2,13 @@
   "name": "simple-server",
   "version": "1.0.0",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "node index.js",
+    "start:dev": "nodemon index.js"
   },
   "dependencies": {
     "apollo-server": "^2.18.0",
-    "graphql": "^15.3.0"
+    "graphql": "^15.3.0",
+    "node-fetch": "^2.6.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.4"
