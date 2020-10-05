@@ -66,8 +66,12 @@ const server = new ApolloServer({
   resolvers,
 });
 
-server.listen().then(({ url }) => {
-  console.log(`🚀  Server is running!
+server
+  .listen({
+    port: process.env.PORT || 4000,
+  })
+  .then(({ url }) => {
+    console.log(`🚀  Server is running!
 📭  Query at https://studio.apollographql.com/dev
 🔉  Listening at ${url}`);
-});
+  });
