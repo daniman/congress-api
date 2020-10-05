@@ -10,5 +10,5 @@ Get your API Key from ProPublica (free, super easy): https://www.propublica.org/
 
 ```
 npm install
-PROPUBLICA_KEY=<YOUR_KEY> npm start:dev
+PROPUBLICA_KEY=<YOUR_KEY> npm run start:dev
 ```
