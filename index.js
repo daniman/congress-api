@@ -8,6 +8,8 @@ const headers = {
   "X-API-Key": process.env.PROPUBLICA_KEY || "FAKE_KEY",
 };
 
+console.log(process.env.PROPUBLICA_KEY);
+
 const toCamel = (s) => {
   return s.replace(/([-_][a-z])/gi, ($1) => {
     return $1.toUpperCase().replace("-", "").replace("_", "");
@@ -35,7 +37,7 @@ const resolvers = {
       if (!args.chamber)
         throw new Error("Congress chamber must be specified, eg. SENATE");
 
-      const data = await fetch(
+      return await fetch(
         `https://api.propublica.org/congress/v1/${
           args.congress
         }/${args.chamber.toLowerCase()}/members.json`,
@@ -43,20 +45,37 @@ const resolvers = {
           headers,
         }
       )
-        .then((res) => res.json())
+        .then(async (res) => {
+          if (res.ok) {
+            const data = await res.json();
+            return data.results.map((res) => snakeToCamel(res));
+          } else {
+            throw new Error("Error fetching data. Did you include an API Key?");
+          }
+        })
         .catch((err) => new Error(err));
-      return data.results.map((res) => snakeToCamel(res));
     },
     memberById: async (_, args) => {
-      const data = await fetch(
+      if (!args.id)
+        throw new Error(
+          "Must include an ID for a member of congress to fetch."
+        );
+
+      return await fetch(
         `https://api.propublica.org/congress/v1/members/${args.id}.json`,
         {
           headers,
         }
       )
-        .then((res) => res.json())
+        .then(async (res) => {
+          if (res.ok) {
+            const data = await res.json();
+            return snakeToCamel(data.results[0]);
+          } else {
+            throw new Error("Error fetching data. Did you include an API Key?");
+          }
+        })
         .catch((err) => new Error(err));
-      return snakeToCamel(data.results[0]);
     },
   },
 };
