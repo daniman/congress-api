@@ -17,6 +17,161 @@ enum Chamber {
   SENATE
 }
 
+type ChamberVote {
+  congress: Int
+  session: Int
+  chamber: String
+  rollCall: Int
+  source: String
+  url: String
+  question: String
+  question_text: String
+  description: String
+  voteType: String
+  date: String
+  time: String
+  result: String
+  tieBreaker: String
+  tieBreakerVote: String
+  documentNumber: String
+  documentTitle: String
+  positions: [ChamberVotePosition]
+  total: ChamberVoteTotal
+  democratic: PartyVoteTotal
+  republican: PartyVoteTotal
+  independent: PartyVoteTotal
+  nomination: Nomination
+  bill: Bill
+  amendment: Amendment
+}
+
+type Amendment {
+  number: String
+  apiUri: String
+  sponsorId: ID
+  sponsor: String
+  sponsorUri: String
+  sponsorParty: Party
+  sponsorState: String
+}
+
+type Bill {
+  billId: ID
+  number: String
+  title: String
+  shortTitle: String
+  latestAction: String
+  details: BillDetails
+}
+
+type BillDetails {
+  billId: ID
+  billSlug: String
+  congress: String
+  bill: String
+  billType: String
+  number: String
+  title: String
+  shortTitle: String
+  sponsorTitle: String
+  sponsor: String
+  sponsorId: ID
+  # # sponsor_uri: 'https://api.propublica.org/congress/v1/members/S000148.json',
+  # sponsor_party: Party
+  # sponsor_state: String
+  # gpo_pdf_uri: null,
+  # congressdotgov_url: 'https://www.congress.gov/bill/116th-congress/senate-bill/4653',
+  # govtrack_url: 'https://www.govtrack.us/congress/bills/116/s4653',
+  # introduced_date: '2020-09-22',
+  # active: true,
+  # last_vote: '2020-10-01',
+  # house_passage: null,
+  # senate_passage: null,
+  # enacted: null,
+  # vetoed: null,
+  # cosponsors: 0,
+  # cosponsors_by_party: {},
+  # withdrawn_cosponsors: 0,
+  # primary_subject: '',
+  # committees: '',
+  # committee_codes: [],
+  # subcommittee_codes: [],
+  # latest_major_action_date: '2020-10-01',
+  # latest_major_action: 'Cloture on the motion to proceed to the measure not invoked in Senate by Yea-Nay Vote. 51 - 43. Record Vote Number: 200. (CR S6015)',
+  # house_passage_vote: null,
+  # senate_passage_vote: null,
+  # summary: '',
+  # summary_short: '',
+  # cbo_estimate_url: null,
+  # versions: [Array],
+  # actions: [Array],
+  # presidential_statements: [],
+  # votes: [Array]
+}
+
+type Nomination {
+  nominationId: ID
+  number: String
+  name: String
+  agency: String
+}
+
+type PartyVoteTotal {
+  yes: Int
+  no: Int
+  present: Int
+  notVoting: Int
+  majorityPosition: String
+}
+
+type ChamberVoteTotal {
+  yes: Int
+  no: Int
+  present: Int
+  notVoting: Int
+}
+
+type ChamberVotePosition {
+  memberId: ID
+  name: String
+  party: Party
+  state: String
+  votePosition: String
+  dwNominate: Float
+}
+
+type MemberVote {
+  memberId: ID
+  chamber: String
+  congress: String
+  session: String
+  rollCall: String
+  vote: ChamberVote
+  bill: BillForVote
+  description: String
+  question: String
+  result: String
+  date: String
+  time: String
+  total: MemberVoteTotal
+  position: String
+}
+
+type BillForVote {
+  billId: ID
+  number: String
+  billUrl: String
+  title: String
+  latestAction: String
+}
+
+type MemberVoteTotal {
+  yes: Int
+  no: Int
+  present: Int
+  notVoting: Int
+}
+
 """
 Interface to abstract the shared data returned from the congress members list
 and the individual members detail endpoint.
@@ -42,6 +197,8 @@ interface Member {
   googleEntityId: ID
   cspanId: ID
   govtrackId: ID
+  # extended
+  # totalVotes: Int
 }
 
 """
@@ -77,6 +234,7 @@ type MemberDetails implements Member {
   currentParty: Party
   timesTopicsUrl: String
   timesTag: String
+  votes(offset: Int = 0): [MemberVote]
 }
 
 """
